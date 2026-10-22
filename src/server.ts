@@ -81,10 +81,14 @@ export function createApp(store: Store, tokens: Record<Actor, string>) {
   app.post("/api/discussions", async (req) => {
     user(req);
     const b = z
-      .object({ topic: z.string().trim().min(1).max(500) })
+      .object({ topic: z.string().trim().min(1).max(500), max_rounds: z.number().int().min(0).max(100).default(0), participants: z.array(z.enum(["qoder", "workbuddy", "opencode"])).min(2).max(3).default(["qoder", "workbuddy", "opencode"]) })
       .strict()
       .parse(req.body);
-    return store.start(b.topic);
+    return store.start(b.topic, b.max_rounds, b.participants);
+  });
+  app.post("/api/discussions/:id/begin", async (req) => {
+    user(req);
+    return store.begin(idSchema.parse((req.params as any).id));
   });
   app.post("/api/discussions/:id/stop", async (req) => {
     user(req);
@@ -131,7 +135,7 @@ export function createApp(store: Store, tokens: Record<Actor, string>) {
         content: z.string().trim().max(16000),
         reply_to: idSchema.optional(),
         request_id: z.string().min(1).max(128),
-        round: z.number().int().min(1).max(3).optional(),
+        round: z.number().int().min(1).optional(),
         skip: z.boolean().optional(),
       })
       .strict()

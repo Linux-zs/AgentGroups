@@ -7,6 +7,7 @@ const names: Record<string, string> = {
   user: "用户",
 };
 const statuses: Record<string, string> = {
+  waiting: "等待成员就绪",
   active: "讨论进行中",
   stopped: "已停止",
   completed: "已完成",
@@ -18,7 +19,9 @@ let token = "",
   replyTo: number | undefined,
   busy = false,
   refreshing = false,
-  active = false;
+  active = false,
+  waiting = false,
+  canBegin = false;
 let pendingSend:
   { content: string; reply_to?: number; request_id: string } | undefined;
 async function api(path: string, body?: unknown) {
@@ -52,7 +55,7 @@ function setReply(id?: number) {
     $("reply").append(b);
   }
 }
-function members(progress: any[] = [], turns: any[] = [], round = 0) {
+function members(progress: any[] = [], turns: any[] = [], round = 0, participants: string[] = [], ready: string[] = []) {
   $("members").replaceChildren();
   for (const [id, name] of Object.entries(names)) {
     const el = document.createElement("div");
@@ -66,13 +69,11 @@ function members(progress: any[] = [], turns: any[] = [], round = 0) {
     const sub = document.createElement("small");
     const p = progress.find((x) => x.sender === id);
     const t = turns.find((x) => x.sender === id && x.round === round);
-    sub.textContent =
-      (p
-        ? `最近活动 ${new Date(p.last_active).toLocaleTimeString()}`
-        : "尚无活动") +
-      (t
-        ? ` · ${{ message: "已发言", skip: "已跳过", timeout: "超时" }[t.outcome as string] ?? t.outcome}`
-        : "");
+    const participating = participants.includes(id);
+    const stale = p && Date.now() - p.last_active > 90000;
+    const label = id === 'user' ? '网页用户' : !participating ? (selected ? '未参与本次讨论' : '尚未创建讨论') : !p ? '尚未调用工具' : !active && !waiting ? '讨论已结束' : stale ? '长时间无活动 · 请检查客户端' : waiting ? (ready.includes(id) ? '已确认就绪' : '已连接 · 待 room_info 确认') : t ? ({ message: '本轮已发言', skip: '本轮已跳过', timeout: '旧版超时记录' }[t.outcome as string] ?? t.outcome) : '已连接 · 等待本轮发言';
+    sub.textContent = label + (p ? ' · 最近活动 ' + new Date(p.last_active).toLocaleTimeString() : '');
+    el.classList.toggle('member-stale', Boolean(stale && participating));
     info.append(title, sub);
     el.append(avatar, info);
     $("members").append(el);
@@ -126,6 +127,8 @@ function append(messages: any[]) {
 function select(id: number) {
   selected = id;
   active = false;
+  waiting = false;
+  canBegin = false;
   controls();
   cursor = 0;
   pendingSend = undefined;
@@ -133,14 +136,15 @@ function select(id: number) {
   $("messages").replaceChildren();
   const el = document.createElement("div");
   el.className = "empty";
-  el.textContent = "还没有发言。请在三个客户端启动入群任务。";
+  el.textContent = "还没有发言。请在选定客户端启动入群任务。";
   $("messages").append(el);
 }
 function controls() {
   ($("history") as HTMLSelectElement).disabled = busy;
   ($("send") as HTMLButtonElement).disabled = !active || busy;
   ($("content") as HTMLTextAreaElement).disabled = !active;
-  ($("stop") as HTMLButtonElement).disabled = !active || busy;
+  ($("stop") as HTMLButtonElement).disabled = !(active || waiting) || busy;
+  ($("begin") as HTMLButtonElement).disabled = !canBegin || busy;
 }
 async function refresh() {
   if (refreshing) return;
@@ -157,22 +161,26 @@ async function refresh() {
     if (!selected && history.length) select(history[0].id);
     selectEl.value = String(selected || "");
     ($("start") as HTMLButtonElement).disabled =
-      history.some((d: any) => d.status === "active") || busy;
+      history.some((d: any) => ["active", "waiting"].includes(d.status)) || busy;
     if (selected) {
       const id = selected;
       const info = await api(`/api/room?discussion_id=${id}`);
       if (id !== selected) return;
       const d = info.discussion;
       active = d.status === "active";
+      waiting = d.status === "waiting";
+      canBegin = waiting && d.participants.every((a: string) => info.ready.includes(a));
       $("topic-title").textContent = d.topic;
       $("status").textContent = statuses[d.status] ?? d.status;
-      members(info.progress, info.turns, d.round);
-      Array.from($("rounds").children).forEach((el, i) =>
-        el.classList.toggle("current", active && i + 1 === d.round),
-      );
+      members(info.progress, info.turns, d.round, d.participants, info.ready);
+      $("preparation").hidden = !waiting;
+      const absent = d.participants.filter((a: string) => !info.ready.includes(a));
+      $("ready-summary").textContent = canBegin ? '所有选定成员已确认就绪，可以开始。' : '等待确认就绪：' + absent.map((a: string) => names[a]).join('、');
+      $("rounds").textContent = d.round ? '第 ' + d.round + ' 轮 / ' + (d.max_rounds || '不限轮次') : '准备阶段 · 尚未开始计时';
+      const pending = info.waiting_for.map((a: string) => names[a]).join('、');
       $("deadline").textContent = active
-        ? `第 ${d.round} 轮 · 剩余 ${Math.max(0, Math.ceil((d.deadline - Date.now()) / 1000))} 秒`
-        : "本次讨论已结束，记录已保存。";
+        ? (Date.now() > d.deadline ? '等待已超过 3 分钟，仍保留本轮。' : '本轮等齐后才推进。') + ' 等待：' + (pending || '正在推进')
+        : waiting ? '请在客户端调用 room_info 确认就绪，然后点击开始。' : '本次讨论已结束，记录已保存。';
       let more = true;
       while (more) {
         const r = await api(
@@ -214,6 +222,8 @@ $("start-form").onsubmit = (e) => {
   void action(async () => {
     const d = await api("/api/discussions", {
       topic: $<HTMLInputElement>("topic").value,
+      max_rounds: Number($<HTMLSelectElement>("max-rounds").value),
+      participants: Array.from(document.querySelectorAll<HTMLInputElement>('input[name="participant"]:checked')).map(el => el.value),
     });
     select(d.id);
     $<HTMLInputElement>("topic").value = "";
@@ -241,6 +251,7 @@ $("send-form").onsubmit = (e) => {
     setReply();
   });
 };
+$("begin").onclick = () => void action(async () => { await api(`/api/discussions/${selected}/begin`, {}); });
 $("stop").onclick = () =>
   void action(async () => {
     await api(`/api/discussions/${selected}/stop`, {});

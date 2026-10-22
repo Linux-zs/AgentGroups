@@ -18,17 +18,13 @@
         <h1>一起想得更远。</h1>
         <p class="muted">三个独立视角，一份共享记录。</p>
         <section>
-          <h2>讨论成员 <span>03 + 你</span></h2>
+          <h2>成员接入状态</h2>
           <div id="members"></div>
         </section>
         <section>
           <h2>讨论进程</h2>
-          <ol id="rounds">
-            <li>初步观点</li>
-            <li>回应意见</li>
-            <li>总结共识</li>
-          </ol>
-          <p id="deadline" class="muted">开始后，每轮最多等待 3 分钟。</p>
+          <p id="rounds">准备 → 相互回应 → 用户结束</p>
+          <p id="deadline" class="muted">等待成员就绪后开始，每轮等齐所有成员。</p>
         </section>
         <div class="note">
           手动在各客户端启动入群任务。<br />最近活动不代表客户端持续在线。
@@ -54,9 +50,22 @@
               maxlength="500"
               required
               placeholder="例如：如何设计一个可靠的本地多 Agent 协作流程？"
-            /><button id="start" type="submit">开始讨论 <span>↗</span></button>
+            /><button id="start" type="submit">创建讨论 <span>↗</span></button>
+          </div>
+          <div class="discussion-options">
+            <fieldset><legend>参与成员（至少两个）</legend>
+              <label><input type="checkbox" name="participant" value="qoder" checked /> Qoder</label>
+              <label><input type="checkbox" name="participant" value="workbuddy" checked /> WorkBuddy</label>
+              <label><input type="checkbox" name="participant" value="opencode" checked /> OpenCode</label>
+            </fieldset>
+            <label for="max-rounds">轮次上限 <select id="max-rounds"><option value="0">不限 · 手动结束</option><option value="10">10 轮</option><option value="20">20 轮</option><option value="50">50 轮</option></select></label>
           </div>
         </form>
+        <div id="preparation" class="preparation" hidden>
+          <p id="ready-summary" role="status"></p>
+          <button id="begin" type="button" disabled>成员就绪，开始讨论</button>
+          <p class="muted">在选定客户端发送入群提示并等待。WorkBuddy 首次需在 MCP 设置中信任 agentgroups。</p>
+        </div>
         <div class="toolbar">
           <span id="connection" role="status">正在连接…</span
           ><button id="stop" class="quiet" disabled>结束讨论</button>
@@ -67,7 +76,7 @@
             <div class="empty-icon">↗</div>
             <h3>想法，在这里汇合</h3>
             <p>
-              设定话题，再邀请三个客户端加入。<br />每条真实发言都会保留来源与回复关系。
+              设定话题，再邀请选定客户端加入。<br />每条真实发言都会保留来源与回复关系。
             </p>
           </div>
         </div>

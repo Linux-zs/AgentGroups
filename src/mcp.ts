@@ -49,7 +49,7 @@ function register(
 }
 register(
   "room_info",
-  "读取身份、成员、轮次、停止状态。首次调用绑定当前讨论；本进程不会自动切换到新讨论。",
+  "读取身份、成员、轮次、停止状态；准备阶段调用即确认自己就绪，然后 wait_messages 等待用户开始。首次调用绑定当前讨论；本进程不会自动切换到新讨论。",
   {},
   async () => {
     const r = await api("/api/room" + (bound ? `?discussion_id=${bound}` : ""));
@@ -66,12 +66,12 @@ register(
 );
 register(
   "send_message",
-  "每轮发言或跳过一次。round 必须来自 room_info；重试同一消息时复用 request_id。",
+  "每轮发言或跳过一次，等所有成员完成才推进。第二轮起先读完上一轮其他成员消息，并用 reply_to 引用其观点回应。round 必须来自 room_info；重试同一消息时复用 request_id。",
   {
     content: z.string().max(16000),
     reply_to: z.number().int().positive().optional(),
     request_id: z.string().min(1).max(128),
-    round: z.number().int().min(1).max(3),
+    round: z.number().int().min(1),
     skip: z.boolean().optional(),
   },
   (a) => api("/api/messages", { ...a, discussion_id: discussion() }),

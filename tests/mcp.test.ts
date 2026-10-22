@@ -45,6 +45,7 @@ test("actual SDK stdio bridges share backend and stay bound to original discussi
       const info = await c.callTool({ name: "room_info", arguments: {} });
       assert.equal(JSON.parse((info.content as any)[0].text).identity, a);
     }
+    s.begin(d.id);
     const sent = await clients[0].callTool({
       name: "send_message",
       arguments: { content: "transport fixture", round: 1, request_id: "same" },
