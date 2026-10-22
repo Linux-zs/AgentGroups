@@ -1,0 +1,17 @@
+{
+  "mcp": {
+    "agentgroups": {
+      "type": "local",
+      "command": [
+        "<ABSOLUTE_NODE_EXE>",
+        "<ABSOLUTE_PROJECT>/dist/src/mcp.js"
+      ],
+      "environment": {
+        "AGENTGROUPS_TOKEN": "<OPENCODE_TOKEN_FROM_LOCAL_SETUP>",
+        "AGENTGROUPS_URL": "http://127.0.0.1:4318"
+      },
+      "timeout": 30000,
+      "enabled": true
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "agentgroups": {
+      "command": "<ABSOLUTE_NODE_EXE>",
+      "args": [
+        "<ABSOLUTE_PROJECT>/dist/src/mcp.js"
+      ],
+      "env": {
+        "AGENTGROUPS_TOKEN": "<WORKBUDDY_TOKEN_FROM_LOCAL_SETUP>",
+        "AGENTGROUPS_URL": "http://127.0.0.1:4318"
+      },
+      "timeout": 30000
+    }
+  }
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+public/app.js
+.local/
+output/
+.playwright-cli/
+*.log
+.runtime/
+.learnings/

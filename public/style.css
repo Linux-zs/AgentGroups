@@ -1,0 +1,485 @@
+:root {
+  --bg: #f5f5f0;
+  --panel: #fff;
+  --ink: #202c2b;
+  --muted: #697571;
+  --line: #e2e7e1;
+  --accent: #245e4e;
+  --soft: #e8f1eb;
+  --radius: 16px;
+  font-family: Inter, "Segoe UI", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  font-size: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+header,
+main,
+footer {
+  max-width: 1320px;
+  margin: auto;
+}
+header {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+}
+.brand {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 31px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+.brand > span {
+  color: var(--accent);
+}
+.brand strong {
+  font-size: 20px;
+  letter-spacing: -0.7px;
+  margin-left: 12px;
+}
+.local {
+  color: var(--muted);
+  font-size: 12px;
+}
+.local i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-left: 8px;
+}
+main {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 34px;
+  padding: 18px 36px 0;
+}
+aside {
+  padding-top: 18px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  font-weight: 700;
+}
+h1 {
+  font-size: 26px;
+  letter-spacing: -1px;
+  margin: 18px 0 10px;
+}
+h2 {
+  font-size: 14px;
+}
+aside section {
+  border-top: 1px solid var(--line);
+  margin-top: 30px;
+  padding-top: 14px;
+}
+aside h2 {
+  display: flex;
+  justify-content: space-between;
+}
+aside h2 span {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.member {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+}
+.avatar {
+  height: 36px;
+  width: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: #e5e9f1;
+  color: #344a70;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.avatar.workbuddy {
+  background: #f1e7da;
+  color: #815e32;
+}
+.avatar.opencode {
+  background: #e7e5ee;
+  color: #625178;
+}
+.avatar.user {
+  background: var(--soft);
+  color: var(--accent);
+}
+.member strong {
+  font-size: 13px;
+}
+.member small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 5px;
+}
+ol {
+  list-style: none;
+  padding: 0;
+  counter-reset: stage;
+}
+ol li {
+  counter-increment: stage;
+  padding: 10px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+ol li:before {
+  content: "0" counter(stage);
+  margin-right: 14px;
+  color: #7d8882;
+  font-size: 10px;
+}
+ol li.current {
+  color: var(--accent);
+  font-weight: 700;
+}
+ol li.current:after {
+  content: "进行中";
+  margin-left: 14px;
+  font-size: 10px;
+  background: var(--soft);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+.note {
+  font-size: 11px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin: 26px 0;
+}
+label {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+select,
+input,
+textarea,
+button {
+  font: inherit;
+}
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+}
+article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  min-width: 0;
+}
+.room-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 28px 20px;
+}
+.room-heading h2 {
+  font-size: 21px;
+  line-height: 1.5;
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+}
+.badge {
+  flex-shrink: 0;
+  font-size: 11px;
+  background: var(--soft);
+  color: var(--accent);
+  padding: 7px 10px;
+  border-radius: 20px;
+}
+#start-form {
+  padding: 0 28px 20px;
+}
+.start-row {
+  display: flex;
+  gap: 10px;
+}
+input,
+textarea {
+  border: 1px solid var(--line);
+  background: #fafbf8;
+  border-radius: 10px;
+  padding: 12px;
+  color: var(--ink);
+  min-width: 0;
+}
+input {
+  flex: 1;
+  font-size: 12px;
+}
+button {
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: white;
+  padding: 11px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12px;
+}
+button:hover {
+  filter: brightness(1.12);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+button span {
+  margin-left: 10px;
+}
+:focus-visible {
+  outline: 3px solid #9ac4af;
+  outline-offset: 3px;
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 9px 28px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.quiet {
+  color: var(--muted);
+  background: transparent;
+  padding: 7px;
+}
+.toolbar .offline {
+  color: #9b4031;
+}
+#error {
+  margin: 12px 28px;
+  background: #fff0eb;
+  padding: 12px;
+  color: #9b4031;
+  border-radius: 8px;
+  font-size: 12px;
+}
+#messages {
+  height: 410px;
+  overflow: auto;
+  padding: 24px 28px;
+  scroll-behavior: smooth;
+}
+.empty {
+  text-align: center;
+  padding: 50px 12px;
+  color: var(--muted);
+}
+.empty-icon {
+  margin: auto;
+  background: var(--soft);
+  border-radius: 20px;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  font-size: 27px;
+  color: var(--accent);
+}
+.empty h3 {
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 19px;
+  margin-top: 22px;
+}
+.empty p {
+  font-size: 12px;
+  line-height: 2;
+}
+.message {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  scroll-margin: 16px;
+}
+.message:target {
+  background: var(--soft);
+  border-radius: 10px;
+}
+.message-body {
+  min-width: 0;
+  flex: 1;
+}
+.message-meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 12px;
+  margin: 2px 0 9px;
+}
+.message-meta span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.message p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.9;
+  margin: 0;
+}
+.message a {
+  font-size: 11px;
+  color: var(--accent);
+  display: inline-block;
+  margin-bottom: 7px;
+}
+.reply-button {
+  background: none;
+  color: var(--muted);
+  font-size: 10px;
+  padding: 3px 0;
+  margin-top: 7px;
+}
+#send-form {
+  border-top: 1px solid var(--line);
+  padding: 20px 28px;
+}
+textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 85px;
+  background: white;
+}
+.composer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  gap: 12px;
+}
+.composer-bottom > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+#reply {
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+#reply button {
+  padding: 3px 8px;
+  margin-left: 12px;
+  background: var(--soft);
+  color: var(--accent);
+}
+footer {
+  padding: 26px 36px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 10px;
+}
+footer span {
+  letter-spacing: 2px;
+}
+@media (min-width: 1450px) {
+  #messages {
+    height: 480px;
+  }
+}
+@media (max-width: 800px) {
+  header {
+    height: 72px;
+    padding: 0 20px;
+  }
+  main {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    gap: 20px;
+  }
+  aside {
+    padding: 0;
+  }
+  aside h1 {
+    font-size: 23px;
+  }
+  aside section,
+  aside .note,
+  aside > .muted {
+    display: none;
+  }
+  aside label {
+    margin-top: 16px;
+  }
+  article {
+    border-radius: 16px;
+  }
+  .room-heading,
+  #start-form,
+  #send-form {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .toolbar {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  #messages {
+    padding: 20px 18px;
+    height: 400px;
+  }
+  .room-heading h2 {
+    font-size: 18px;
+  }
+  .start-row {
+    flex-wrap: wrap;
+  }
+  .start-row input {
+    flex-basis: 100%;
+  }
+  .composer-bottom > span {
+    max-width: 140px;
+    line-height: 1.7;
+  }
+  footer {
+    padding: 22px 20px;
+  }
+  .local {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #messages {
+    scroll-behavior: auto;
+  }
+}
